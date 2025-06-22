@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Today</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        .filters {
+            background-color: #aaa;
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        #report {
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <div class="row text-center">
+            <h1 class="text-primary">Today</h1>
+            <h3 class="text-primary" id="current-date"></h3>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="filters">
+                    <h3 class="text-primary">Filters</h3>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select class="form-select" id="category">
+                            <option value="-1">All</option>
+                            <option value="politics">Politics</option>
+                            <option value="entertainment">Entertainment</option>
+                            <option value="science">Science</option>
+                            <option value="technology">Technology</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Country</label>
+                        <select class="form-select" id="country">
+                            <option value="-1">All</option>
+                        </select>
+                    </div>
+                    <div class="text-end mt-2">
+                        <button class="btn btn-primary" id="submit-btn">Submit</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="loading text-primary text-center d-none"><i class="fa-solid fa-rotate fa-spin fa-3x"></i></div>
+                <div id="report"></div>
+            </div>
+        </div>
+        
+    </div>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js" integrity="sha512-b+nQTCdtTBIRIbraqNEwsjB6UvL3UEMkXnhzd8awtCYh0Kcsjl9uEgwVFVbhoj3uu1DO1ZMacNvLoyJJiNfcvg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        var current_date = toLocaleISOString(new Date()).split('T')[0];
+
+        function toLocaleISOString(date) {
+            function pad(number) {
+                if (number < 10) {
+                    return '0' + number;
+                }
+                return number;
+            }
+
+            return date.getFullYear() +
+                '-' + pad(date.getMonth() + 1) +
+                '-' + pad(date.getDate()) +
+                'T' + pad(date.getHours()) +
+                ':' + pad(date.getMinutes()) +
+                ':' + pad(date.getSeconds()) ;
+
+        }
+
+        function setLoading(value) {
+            if (value == true) {
+                $(".loading").removeClass("d-none");
+            }
+            else {
+                $(".loading").addClass("d-none");
+            }
+        }
+
+        $(document).ready(function() {
+            $("#current-date").text(current_date);
+
+            $.getJSON("/get-countries", function(data) {
+                for (var i in data.data) {
+                    var country = data.data[i];
+                    var option = `<option value="${country}">${country}</option>`;
+                    $("#country").append(option);
+                }
+            });
+
+            $("#submit-btn").click(function() {
+                setLoading(true);
+                $.post("/get-daily-report", {
+                    current_date: current_date,
+                    category: $("#category").val(),
+                    country: $("#country").val(),
+                })
+                .done(function(data) {
+                    setLoading(false);
+                    if (data.status == "OK") {
+                        $("#report").html(marked.parse(data.data));
+                    }
+                    else {
+                        alert(data.error);
+                    }
+                })
+                .fail(function() {
+                    setLoading(false);
+                    alert("Error making request.");
+                });
+            });
+        });
+    </script>
+</body>
+</html>
