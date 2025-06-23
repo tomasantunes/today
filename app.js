@@ -48,9 +48,19 @@ app.post("/get-daily-report", async (req, res) => {
     prompt2 += `related to the country of ${country}, `;
   }
 
-  prompt1 += "can you tell me all the major historical or newsworthy events that happened on this day and month in previous years as well as holidays, anniversaries or commemorative days. Tell me any odd facts or curiosities about this day and month. Tell me about any death or birth dates of important or famous people on this day and month. Tell me if there were any important or famous people had any achievements on this day and month. Tell me also of important product launches, movie releases, album releases, book releases or game releases for this day and month.";
+  prompt1 += "can you tell me all the major historical or newsworthy events that happened on this day and month in previous years as well as holidays, anniversaries or commemorative days. Tell me any odd facts or curiosities about this day and month. Tell me about any death or birth dates of important or famous people on this day and month. Tell me if there were any important or famous people had any achievements on this day and month. Tell me also of important product launches, movie releases, album releases, book releases or game releases for this day and month. ";
+  
+  if (category != "-1") {
+    prompt1 += "Make sure you only mention events directly related to the category I have chosen. ";
+  }
+  if (country != "-1") {
+    prompt1 += "Make sure you only mention events directly related to the country I have chosen. ";
+  }
 
-  prompt2 += "can you tell me any important events that are happening on this date?";
+  prompt2 += "can you tell me any important events that are happening on this date? ";
+
+  prompt1 += "Don't write anything directed at me, jump right into writing what was asked.";
+  prompt2 += "Don't write anything directed at me, jump right into writing what was asked.";
 
   var res1 = await getChatResponse(prompt1);
   if (res1 == null) {
