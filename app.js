@@ -48,7 +48,7 @@ app.post("/get-daily-report", async (req, res) => {
     prompt2 += `related to the country of ${country}, `;
   }
 
-  prompt1 += "can you tell me all the major historical or newsworthy events that happened on this day and month in previous years as well as holidays, anniversaries or commemorative days. Tell me any odd facts or curiosities about this day and month. Tell me about any death or birth dates or achievements of important or famous people on this day and month. Tell me also of important product launches, movie releases, album releases or game releases for this day and month.";
+  prompt1 += "can you tell me all the major historical or newsworthy events that happened on this day and month in previous years as well as holidays, anniversaries or commemorative days. Tell me any odd facts or curiosities about this day and month. Tell me about any death or birth dates of important or famous people on this day and month. Tell me if there were any important or famous people had any achievements on this day and month. Tell me also of important product launches, movie releases, album releases, book releases or game releases for this day and month.";
 
   prompt2 += "can you tell me any important events that are happening on this date?";
 
