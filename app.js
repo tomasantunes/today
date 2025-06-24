@@ -35,6 +35,7 @@ app.post("/get-daily-report", async (req, res) => {
   var current_date = req.body.current_date;
   var category = req.body.category;
   var country = req.body.country;
+  var language = req.body.language;
 
   var prompt1 = `The current date is ${current_date}. `;
   var prompt2 = `The current date is ${current_date}. `;
@@ -62,8 +63,11 @@ app.post("/get-daily-report", async (req, res) => {
 
   prompt2 += "can you tell me any important events that are happening on this date? ";
 
-  prompt1 += "Don't write anything directed at me, jump right into writing what was asked.";
-  prompt2 += "Don't write anything directed at me, jump right into writing what was asked.";
+  prompt1 += "Don't write anything directed at me, jump right into writing what was asked. ";
+  prompt2 += "Don't write anything directed at me, jump right into writing what was asked. ";
+
+  prompt1 += `Please answer in the following language: ${language}.`;
+  prompt2 += `Please answer in the following language: ${language}.`;
 
   var res1 = await getChatResponse(prompt1);
   if (res1 == null) {
