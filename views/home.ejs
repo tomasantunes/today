@@ -133,6 +133,7 @@
             });
 
             $("#submit-btn").click(function() {
+                $("#report").html("");
                 setLoading(true);
                 $.post("/get-daily-report", {
                     current_date: current_date,
